@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Interruption
+{% endblock %}
+
+{% block body %}
+	<h1>Create new Interruption</h1>
+
+	{{ include('interruption/_form.html.twig') }}
+
+	{# <a href="{{ path('app_interruption_index') }}">back to list</a> #}
+{% endblock %}

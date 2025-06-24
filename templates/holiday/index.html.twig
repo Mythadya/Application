@@ -1,0 +1,33 @@
+{# templates/holiday/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Jours Fériés
+	{{ "now"|date('Y') }}
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<h1>Jours Fériés
+			{{ "now"|date('Y') }}</h1>
+
+		<div class="row">
+			{% for holiday in holidays %}
+				<div class="col-md-4 mb-4">
+					<div class="card">
+						<div class="card-header bg-primary text-white">
+							{{ holiday.date|date('d/m/Y') }}
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">{{ holiday.nom }}</h5>
+							<span class="badge bg-secondary">{{ holiday.zone }}</span>
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<div class="col-12">
+					<div class="alert alert-info">Aucun jour férié cette année</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

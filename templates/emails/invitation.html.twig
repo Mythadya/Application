@@ -1,0 +1,22 @@
+{# {% extends 'base.html.twig' %} #}
+
+{% block body %}
+	<div class="container">
+		<h2>Invitation à rejoindre notre plateforme</h2>
+
+		<p>Bonjour,</p>
+
+		<p>Vous avez été invité(e) à rejoindre notre plateforme en tant que
+			<strong>{{ role }}</strong>.</p>
+
+		<p>Pour finaliser votre inscription, veuillez cliquer sur le lien ci-dessous :</p>
+
+		<a href="{{ registrationUrl }}" style="background: #0066cc; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; display: inline-block;">
+			Créer mon compte
+		</a>
+
+		<p style="margin-top: 20px;">Ce lien expirera dans 7 jours.</p>
+
+		<p>Cordialement,<br>L'équipe du centre de formation</p>
+	</div>
+{% endblock %}

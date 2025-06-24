@@ -1,0 +1,547 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			overflow: hidden; /* évite scroll inutiles */
+			font-family: Arial, Helvetica, sans-serif;
+
+		}
+
+		.container-fluid {
+			height: 100vh;
+			display: flex;
+			flex-direction: column;
+			padding: 4;
+
+
+		}
+
+		/*.gantt-scroll-wrapper {
+			flex: 1;
+			overflow-x: auto;
+			overflow-y: hidden;
+			position: relative;
+			background-color: #f8f9fc;
+		}*/
+
+
+		/*this is height of scroll body*/
+		.gantt-scroll-wrapper {
+			overflow: hidden; /* on gère manuellement le scroll via JS */
+			cursor: grab;
+			height: 800px;
+			user-select: none;
+
+		}
+
+		.gantt-scroll-wrapper:active {
+			cursor: grabbing;
+		}
+
+		.gantt-scroll-inner {
+			min-width: {{total_days * day_width}}
+			px;
+		}
+
+		.gantt-scroll-wrapper {
+			width: 100%;
+			overflow-x: auto;
+		}
+
+
+		.gantt-scroll-wrapper {
+			width: 100%;
+			overflow-x: auto;
+		}
+		.gantt-header {
+			position: sticky;
+			top: 0;
+			background: white;
+			z-index: 50;
+			box-shadow: 0 2px 4px rgba(228, 221, 221, 0.1);
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.timeline-row {
+			display: flex;
+			height: 25px;
+			line-height: 25px;
+			white-space: nowrap;
+			border-bottom: 1px solid #ccc;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.year-column,
+		.month-column,
+		.week-column {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-right: 1px solid black;
+			font-size: 12px;
+			background: #fff;
+			border-bottom: 1px solid black;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		.total-stagiaires-column {
+			display: flex;
+			align-items: left;
+			justify-content: left;
+			border-right: 1px solid black;
+			font-size: 12px;
+			background: #fff;
+
+		}
+
+		.active-stagiaires-column {
+			display: flex;
+			align-items: left;
+			justify-content: left;
+			border-right: 1px solid black;
+			font-size: 12px;
+			background: #fff;
+			color: green;
+		}
+
+
+		.year-column {
+			font-weight: bold;
+			color: black;
+			font-size: 20px;
+
+			background-color: rgb(171, 181, 190); /*#e2e6ea*/
+		}
+
+		.formation-name {
+			position: sticky;
+			left: 0;
+			background: white;
+			width: 5px;
+			border-right: 1px solid #ccc;
+			font-weight: bold;
+			padding-left: 5px;
+			z-index: 5;
+
+		}
+
+		.gantt-scroll-body {
+			overflow-y: auto;
+			max-height: calc(100vh - 200px); /* ajuste si ton header fait +/– */
+		}
+
+		.gantt-row {
+			display: flex;
+			margin-bottom: 5px;
+		}
+
+		.timeline-area {
+			position: relative;
+			height: 2px;
+		}
+
+		.formation-bar {
+			position: absolute;
+			height: 30px;
+			background: #4e73df;
+			color: white;
+			top: 50px;
+			font-size: 12px;
+			padding-left: 2px;
+			border-radius: 0;
+			z-index: 1;
+			display: flex;
+			text-overflow: ellipsis;
+			align-items: center;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.entreprise-period {
+			position: absolute;
+			top: 50px;
+			height: 30px;
+			background-color: rgb(17, 139, 72);
+			border-radius: 0;
+			z-index: 2;
+			opacity: 0.8;
+			color: white;
+			font-family: Arial, Helvetica, sans-serif;
+      align-items: center;
+		  display: flex; /*this one put text at center*/
+      font-size:12px;
+		}
+
+    .validation-bar{
+      position: absolute;
+      top:50px;
+      height: 30px;
+      z-index: 2;
+      opacity: 0.8;
+       background-color: #dc3545;  
+       color: white; 
+       display: flex; 
+       align-items: center; 
+       font-size: 12px; 
+       padding-left: 3px;">
+      
+    }
+
+		.interruption {
+			position: absolute;
+			top: 50px;
+			height: 30px;
+			background-color: orange;
+			opacity: 0.8;
+			z-index: 3;
+		}
+
+		.holiday-marker {
+			position: absolute;
+			top: 0;
+			width: 5px;
+			height: 100vh;
+			background: rgb(192, 45, 50);
+			z-index: 1;
+			pointer-events: none; /* Allow clicking through them */
+		}
+
+
+		.today-marker {
+			position: absolute;
+			top: 0;
+			width: 4px;
+			height: 100vh;
+			background: green;
+			z-index: 0;
+		}
+
+		/*pour masquer le soulignement d'un lien hypertexte, utiliser cette propriété*/
+		a {
+			text-decoration: none;
+		}
+
+		.grid-line {
+			position: absolute;
+			top: 0;
+			width: 8px;
+			height: 100vh;
+			background: #cbcbcb; /*  rgba(0, 0, 0, 0.1); light gray line */
+			z-index: 0; /* behind other elements */
+			pointer-events: none; /* clickable elements still work */
+		}
+	</style>
+{% endblock %}
+{% block body %}
+<div class="container-fluid py-2 px-0">
+    <h1 class="h3 text-center my-3">Planning des Formations</h1>
+
+    <!-- CONTENEUR SCROLLABLE -->
+    <div class="gantt-scroll-wrapper" id="scroll-wrapper">
+        <div class="gantt-scroll-inner" id="scroll-inner" style="min-width: {{ total_days * day_width }}px;">
+
+            <!-- HEADERS SYNCHRONISÉS -->
+            <div class="gantt-header">
+                <div class="timeline-row">
+                    {% for year, weeks in yearly_weeks %}
+                        <div class="year-column" style="width: {{ weeks * 7 * day_width }}px">{{ year }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="timeline-row">
+                    {% for month in months %}
+                        {% set daysInMonth = date_service.getDaysInMonthFromString(month) %}
+                        <div class="month-column" style="width: {{ daysInMonth * day_width }}px">
+                            {{ month|split('-')[1]|month_name_fr }}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="timeline-row">
+                    {% for week in all_weeks %}
+                        <div class="week-column" style="width: {{ 7 * day_width }}px">{{ week.number }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="timeline-row">
+                    {% for week in all_weeks %}
+                        <div class="total-stagiaires-column" style="width: {{ 7 * day_width }}px">{{ week.total_stagiaires }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="timeline-row">
+                    {% for week in all_weeks %}
+                        <div class="active-stagiaires-column" style="width: {{ 7 * day_width }}px">{{ week.active_stagiaires }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- BODY DU GANTT -->
+            <div class="gantt-scroll-body">
+
+                <!-- Holiday Row -->
+                <div class="gantt-row">
+                    <div class="formation-name" style="background: transparent; border: none;"></div>
+                    <div class="holiday-row" style="position: sticky; top: 0; z-index: 10; height: 700px; background: white;">
+                        <div class="timeline-area" style="width: {{ total_days * day_width }}px; position: relative;">
+                            {% for holiday in holidays %}
+                                <div class="holiday-marker" data-date="{{ holiday.date|date('Y-m-d') }}" style="left: {{ date_service.getDaysBetween(start_date, holiday.date) * day_width }}px;"></div>
+                            {% endfor %}
+                            <div id="today-marker" class="today-marker"></div>
+                        </div>
+
+                        {% for group, formations in grouped_formations %}
+                            {% for formation in formations %}
+                                <div class="gantt-row d-flex" style="margin-bottom: 5px;">
+                                    <div class="timeline-area" style="width: {{ total_days * day_width }}px; position:relative; height:27px;">
+
+                                        {% for i in 0..(total_days // 7) %}
+                                            <div class="grid-line" style="left: {{ i * 7 * day_width }}px;"></div>
+                                        {% endfor %}
+
+                                        <!-- Bar Formation -->
+                                        <a href="{{ path('app_formation_edit', {'id': formation.id}) }}"
+                                           class="formation-bar"
+                                           data-start="{{ formation.dateDebut|date('Y-m-d') }}"
+                                           data-end="{{ formation.dateFin|date('Y-m-d') }}"
+                                           data-grn="{{ formation.groupeRattachement }}">
+                                            {{ formation.nom }} {{ formation.numero }} [5]
+                                            {{ formation.dateDebut|date('d/m/Y') }} →
+                                            {{ formation.dateFin|date('d/m/Y') }} 
+                                            {{ formation.nombreHeures }} h
+                                        </a>
+
+                                        <!-- Périodes en entreprise -->
+                                        {% for periode in formation.periodEnEntreprises %}
+                                            <a href="{{ path('app_period_en_entreprise_edit', {'id': periode.id}) }}"
+                                               class="entreprise-period"
+                                               data-start="{{ periode.dateDebut|date('Y-m-d') }}"
+                                               data-end="{{ periode.dateFin|date('Y-m-d') }}">
+                                                {{ periode.dateDebut|date('d/m/Y') }} -
+                                                {{ periode.dateFin|date('d/m/Y') }}
+                                                {{ periode.numbreHeures }} h
+                                            </a>
+                                        {% endfor %}
+
+                                        <!-- Période de validation -->
+                                     {% if formation.dateDebutValidation and formation.dateFinValidation %}
+                                            <div class="validation-bar"
+                                                data-start="{{ formation.dateDebutValidation|date('Y-m-d') }}"
+                                                data-end="{{ formation.dateFinValidation|date('Y-m-d') }}">
+                                                {# {{ formation.dateDebutValidation|date('d/m/Y') }} →
+                                                {{ formation.dateFinValidation|date('d/m/Y') }} #}
+                                            </div>
+                                        {% endif %}
+
+
+                                           <!-- Interruptions -->
+                                        {% for interruption in formation.interruptions %}
+                                            <div class="interruption"
+                                                 data-start="{{ interruption.dateDebut|date('Y-m-d') }}"
+                                                 data-end="{{ interruption.dateFin|date('Y-m-d') }}">
+                                            </div>
+                                        {% endfor %}
+
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+	{% block javascripts %}
+		{{ parent() }}
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+const wrapper = document.getElementById('scroll-wrapper');
+const header = document.querySelector('.gantt-header');
+const dayWidth = {{ day_width }};
+const startDate = new Date('{{ start_date|date('Y-m-d') }}');
+const endDate = new Date('{{ end_date|date('Y-m-d') }}');
+
+// Normalize time to midnight for safe calculations
+startDate.setHours(0, 0, 0, 0);
+endDate.setHours(0, 0, 0, 0);
+
+function positionElements() { // Position holiday markers
+document.querySelectorAll('.holiday-marker').forEach(marker => {
+const date = new Date(marker.dataset.date);
+date.setHours(0, 0, 0, 0);
+const offset = Math.floor((date - startDate) / (86400 * 1000));
+marker.style.left = `${
+offset * dayWidth
+}px`;
+});
+// Position validation periods (red bar)
+/*document.querySelectorAll('.validation-bar').forEach(el => {
+	const start = new Date(el.dataset.start);
+	const end = new Date(el.dataset.end);
+	const offset = Math.floor((start - startDate) / (86400 * 1000));
+	const width = Math.floor((end - start) / (86400 * 1000)) + 1;
+	el.style.left = `${offset * dayWidth}px`;
+	el.style.width = `${width * dayWidth}px`;
+});*/
+
+// Position formation bars, entreprise periods, and interruptions
+document.querySelectorAll('.formation-bar, .entreprise-period, .interruption, .validation-bar').forEach(el => {
+const start = new Date(el.dataset.start);
+const end = new Date(el.dataset.end);
+start.setHours(0, 0, 0, 0);
+end.setHours(0, 0, 0, 0);
+
+const offset = Math.floor((start - startDate) / (86400 * 1000));
+const width = Math.floor((end - start) / (86400 * 1000)) + 1;
+
+el.style.left = `${
+offset * dayWidth
+}px`;
+el.style.width = `${
+width * dayWidth
+}px`;
+});
+
+// Position today marker if within range
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const todayMarker = document.getElementById('today-marker');
+if (today >= startDate && today <= endDate && todayMarker) {
+const offsetToday = Math.floor((today - startDate) / (86400 * 1000));
+todayMarker.style.left = `${
+offsetToday * dayWidth
+}px`;
+todayMarker.style.display = 'block';
+} else if (todayMarker) {
+todayMarker.style.display = 'none';
+}
+}
+
+// Call the positioning logic once on load
+positionElements();
+
+// Sync scroll between gantt body and header
+wrapper.addEventListener('scroll', () => {
+header.scrollLeft = wrapper.scrollLeft;
+});
+
+// Drag-to-scroll functionality
+let isDragging = false;
+let startX,
+scrollLeft;
+
+wrapper.addEventListener('mousedown', (e) => {
+isDragging = true;
+startX = e.pageX - wrapper.offsetLeft;
+scrollLeft = wrapper.scrollLeft;
+wrapper.style.cursor = 'grabbing';
+e.preventDefault();
+});
+
+document.addEventListener('mouseup', () => {
+isDragging = false;
+wrapper.style.cursor = 'grab';
+});
+
+document.addEventListener('mousemove', (e) => {
+if (! isDragging) 
+return;
+
+
+
+e.preventDefault();
+const x = e.pageX - wrapper.offsetLeft;
+const walk = (x - startX) * 2;
+wrapper.scrollLeft = scrollLeft - walk;
+});
+});
+		</script>
+	{% endblock %}
+
+{# {% endblock %}  
+ {% block javascripts %}
+																										{{ parent() }}<script>
+																																																			document.addEventListener('DOMContentLoaded', function () {
+																																										const wrapper = document.getElementById('scroll-wrapper');
+																																																					const header = document.querySelector('.gantt-header');
+																																																																																																							const dayWidth = {{ day_width }};
+																																																																																															const startDate = new Date('{{ start_date|date('Y-m-d') }}');
+																																																																																																const endDate = new Date('{{ end_date|date('Y-m-d') }}');
+																																																																																																																																														
+																																																																																														// Position all elements initially
+																																																																																																	function positionElements() { // Position holiday markers
+																																																																																														document.querySelectorAll('.holiday-marker').forEach(marker => {
+																																																																																																									const date = new Date(marker.dataset.date);
+																																																																																						const offset = Math.floor((date - startDate) / (86400 * 1000));
+																																																																																																										marker.style.left = `${
+																																																																																													offset * dayWidth
+																																																																																																	}px`;
+																																																																																																}); 
+																																																																																																																																							
+																																																																																{# // Position other elements (formations, periods, interruptions)
+																																																																																																																																														document.querySelectorAll('.formation-bar, .entreprise-period, .interruption').forEach(el => {
+																																																																																																																																														const start = new Date(el.dataset.start);
+																																																																																																																																														const end = new Date(el.dataset.end);
+																																																																																																																																														const offset = Math.floor((start - startDate) / (86400 * 1000));
+																																																																																																																																														const width = Math.floor((end - start) / (86400 * 1000)) + 1;
+																																																																																																																																														el.style.left = `${
+																																																																																																																																														offset * dayWidth
+																																																																																																																																														}px`;
+																																																																																																																																														el.style.width = `${
+																																																																																																																																														width * dayWidth
+																																																																																																																																														}px`;
+																																																																																																																																														});
+																																																																																																																																														}
+																																																																																																																																														
+																																																																																																																																														// Initialize
+																																																																																																																																														positionElements();
+																																																																																																																																														
+																																																																																																																																														// Sync scrolling between header and body
+																																																																																																																																														wrapper.addEventListener('scroll', () => {
+																																																																																																																																														header.scrollLeft = wrapper.scrollLeft;
+																																																																																																																																														});
+																																																																																																																																														
+																																																																																																																																														// Drag-to-scroll functionality
+																																																																																																																																														let isDragging = false;
+																																																																																																																																														let startX,
+																																																																																																																																														scrollLeft;
+																																																																																																																																														
+																																																																																																																																														wrapper.addEventListener('mousedown', (e) => {
+																																																																																																																																														isDragging = true;
+																																																																																																																																														startX = e.pageX - wrapper.offsetLeft;
+																																																																																																																																														scrollLeft = wrapper.scrollLeft;
+																																																																																																																																														wrapper.style.cursor = 'grabbing';
+																																																																																																																																														e.preventDefault();
+																																																																																																																																														});
+																																																																																																																																														
+																																																																																																																																														document.addEventListener('mouseup', () => {
+																																																																																																																																														isDragging = false;
+																																																																																																																																														wrapper.style.cursor = 'grab';
+																																																																																																																																														});
+																																																																																																																																														
+																																																																																																																																														document.addEventListener('mousemove', (e) => {
+																																																																																																																																														if (! isDragging) 
+																																																																																																																																														return;
+																																																																																																																																														
+																																																																																																																																														
+																																																																																																																																														
+																																																																																																																																														e.preventDefault();
+																																																																																																																																														const x = e.pageX - wrapper.offsetLeft;
+																																																																																																																																														const walk = (x - startX) * 2; // Scroll multiplier
+																																																																																																																																														wrapper.scrollLeft = scrollLeft - walk;
+																																																																																																																																														});
+																																																																																																																																														});
+																																																																																																																																																</script>
+																																																																																																																																															{% endblock %} #}
+
+																																																																																																																																									 

@@ -1,0 +1,50 @@
+{% block body %}
+	{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+	<div class="container mt-4 mb-5 p-4 rounded bg-light shadow-sm" style="max-width: 700px;">
+		<h2 class="text-center mb-4">{{ button_label|default('Créer une période en entreprise') }}</h2>
+
+		<div class="mb-3">
+			{{ form_label(form.dateDebut, 'Date de début', {'label_attr': {'class': 'form-label'}}) }}
+			{{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.dateDebut) }}
+		</div>
+
+		<div class="mb-3">
+			{{ form_label(form.dateFin, 'Date de fin', {'label_attr': {'class': 'form-label'}}) }}
+			{{ form_widget(form.dateFin, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.dateFin) }}
+		</div>
+
+		<div class="mb-5 ">
+			{{ form_label(form.formation, 'Formation associée', {'label_attr': {'class': 'form-label'}}) }}
+			{{ form_widget(form.formation, {'attr': {'class': 'form-select'}}) }}
+			{{ form_errors(form.formation) }}
+		</div>
+		<div class="mb-3">
+			{{ form_widget(form.numbreHeures, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.numbreHeures) }}
+			{{ form_label(form.numbreHeures, 'Nombre Heures', {'label_attr': {'class': 'form-label'}}) }}
+		</div>
+
+		<div class="text-center">
+			<div class="d-flex justify-content-between mt-0 mb-0">
+				<button class="btn btn-success px-5 py-2 mt-4">
+					{{ button_label|default('Enregistrer') }}
+				</button>
+
+				<a href="{{ path('app_period_en_entreprise_index') }}" class="btn btn-secondary px-4 mt-4">
+					← Retour à la liste
+				</a>
+			</div>
+		</div>
+	</div>
+
+	{{ form_end(form) }}
+{% endblock %}
+
+
+{# {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }} #}

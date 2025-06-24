@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du jour férié
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<h1>Détails du jour férié</h1>
+
+		<table class="table">
+			<tbody>
+				<tr>
+					<th>Date</th>
+					<td>{{ jour_ferie.date|date('d/m/Y') }}</td>
+				</tr>
+				<tr>
+					<th>Nom</th>
+					<td>{{ jour_ferie.nom }}</td>
+				</tr>
+				<tr>
+					<th>Zone</th>
+					<td>{{ jour_ferie.zone|replace({'_': ' ', '-': ' '})|title }}</td>
+				</tr>
+				<tr>
+					<th>Année</th>
+					<td>{{ jour_ferie.annee }}</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<a href="{{ path('app_jour_ferie_index') }}" class="btn btn-secondary">
+			<i class="fas fa-arrow-left"></i>
+			Retour à la liste
+		</a>
+	</div>
+{% endblock %}

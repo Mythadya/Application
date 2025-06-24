@@ -1,0 +1,111 @@
+{# templates/admin/utilisateurs/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Utilisateurs
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<h1 class="mb-4 text-center">Liste des Utilisateurs</h1>
+
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Email</th>
+					<th>Rôle</th>
+					<th>Nom</th>
+					<th>Prénom</th>
+					<th>Codepostal</th>
+					<th>Ville</th>
+					<th>Date Invitation</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for utilisateur in utilisateurs %}
+					<tr>
+						<td>{{ utilisateur.id }}</td>
+						<td>{{ utilisateur.email }}</td>
+						<td>
+							<span class="badge
+																																																												  {% if utilisateur.role == 'ROLE_ADMIN' %}bg-danger
+																																																													 {% elseif utilisateur.role == 'ROLE_GESTIONNAIRE' %}bg-warning
+																																																												 {% else %}bg-primary{% endif %}">
+								{{ utilisateur.role }}
+							</span>
+						</td>
+						<td>{{ utilisateur.nom }}</td>
+						<td>{{ utilisateur.prenom }}</td>
+						<td>{{ utilisateur.codepostal }}</td>
+						<td>{{ utilisateur.ville }}</td>
+						<td>{{ utilisateur.dateInvitation|date('d/m/Y H:i') }}</td>
+						<td>
+							<a href="{{ path('app_utilisateurs_show', {'id': utilisateur.id}) }}" class="btn btn-sm btn-info">
+								Voir
+							</a>
+							<a href="{{ path('app_utilisateurs_edit', {'id': utilisateur.id}) }}" class="btn btn-sm btn-warning">
+								Éditer
+							</a>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="7">Aucun utilisateur trouvé</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<a href="{{ path('app_utilisateurs_new') }}" class="btn btn-primary">
+			Créer un nouvel utilisateur
+		</a>
+	</div>
+{% endblock %}
+
+
+{# {% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs index{% endblock %}
+
+{% block body %}
+    <h1>Utilisateurs index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>DateInvitation</th>
+                <th>Password</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for utilisateur in utilisateurs %}
+            <tr>
+                <td>{{ utilisateur.id }}</td>
+                <td>{{ utilisateur.nom }}</td>
+                <td>{{ utilisateur.prenom }}</td>
+                <td>{{ utilisateur.email }}</td>
+                <td>{{ utilisateur.role }}</td>
+                <td>{{ utilisateur.dateInvitation ? utilisateur.dateInvitation|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ utilisateur.password }}</td>
+                <td>
+                    <a href="{{ path('app_utilisateurs_show', {'id': utilisateur.id}) }}">show</a>
+                    <a href="{{ path('app_utilisateurs_edit', {'id': utilisateur.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_utilisateurs_new') }}">Create new</a>
+{% endblock %} #}

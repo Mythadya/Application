@@ -1,0 +1,36 @@
+/*body {
+  background-color: burlywood;
+}*/
+
+.nav-link {
+  color: white;
+  font-size: 22px;
+  font-weight: 100;
+  font-weight: bolder;
+  padding: 10px 15px;
+  margin: 5px 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.nav-link.active {
+  font-weight: bold;
+  background-color: #d4bb9b;
+  border-radius: 5px;
+}
+.navbar {
+  background-color: #9e363a; /*#00c9a7, rgb(228, 65, 65) #9e363a     rgb(49, 13, 13)        */
+  height: 100px;
+}
+
+label {
+  font-size: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
+}
+input {
+  border-radius: 20px;
+}
+
+p {
+  color: black;
+}

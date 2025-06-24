@@ -1,0 +1,28 @@
+# config/services.yaml
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  # Makes classes in src/ available as services
+  App\:
+    resource: "../src/"
+    exclude:
+      - "../src/DependencyInjection/"
+      - "../src/Entity/"
+      - "../src/Kernel.php"
+      - "../src/Tests/"
+
+  # Explicit service configurations
+  App\Security\UsersAuthenticator:
+    arguments:
+      $urlGenerator: "@router.default"
+      $userRepository: '@App\Repository\UtilisateursRepository'
+
+  App\Command\ImportJourFerieCommand:
+    arguments:
+      $projectDir: "%kernel.project_dir%"
+
+  App\Service\JourFerieCsvImporter:
+    arguments:
+      $projectDir: "%kernel.project_dir%"

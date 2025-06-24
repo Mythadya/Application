@@ -1,0 +1,110 @@
+{% block body %}
+
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+<div
+	class="container mt-3 mb-3" style="max-width: 800px; margin: 0 auto; padding: 20px; background-color:; border-radius: 10px; box-shadow: 0 4px 8px rgba(146, 85, 62, 0.3);">
+
+	{# <div class="container mt-4 mb-5 p-4 rounded bg-light shadow-sm" style="max-width: 800px;"> #}
+	<div class="container mt-4 mb-5 p-4 rounded bg-secondary-subtle shadow-sm" ">
+		<h2 class="text-center mb-4">{{ button_label|default('Créer un Utilisateur') }}</h2>
+
+		<div class="mb-3">
+			{{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+			{{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.nom) }}
+		</div>
+
+		<div class="mb-3">
+			{{ form_label(form.prenom, 'Prénom', {'label_attr': {'class': 'form-label'}}) }}
+			{{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.prenom) }}
+		</div>
+
+		<div class="mb-3">
+			{{ form_label(form.codepostal, 'Code Postal', {'label_attr': {'class': 'form-label'}}) }}
+			{{ form_widget(form.codepostal, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.codepostal) }}
+		</div>
+
+		<div class="mb-3">
+			{{ form_label(form.ville, 'Ville', {'label_attr': {'class': 'form-label'}}) }}
+			{{ form_widget(form.ville, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.ville) }}
+		</div>
+
+		<div class="mb-3">
+			{{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+			{{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.email) }}
+		</div>
+
+		<div class="mb-3">
+			{{ form_label(form.role, 'Rôle', {'label_attr': {'class': 'form-label'}}) }}
+			{{ form_widget(form.role, {'attr': {'class': 'form-select'}}) }}
+			{{ form_errors(form.role) }}
+		</div>
+
+		<div class="mb-3">
+			{{ form_label(form.dateInvitation, 'Date d\'invitation', {'label_attr': {'class': 'form-label'}}) }}
+		{{ form_widget(form.dateInvitation, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(form.dateInvitation) }}
+	</div>
+
+	<div class="mb-4">
+		{{ form_label(form.password, 'Mot de passe', {'label_attr': {'class': 'form-label'}}) }}
+		{{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+		{{ form_errors(form.password) }}
+	</div>
+
+	<div class="text-center">
+		<div class="d-flex justify-content-between mt-4">
+			<button class="btn btn-success px-5 py-2">
+				{{ button_label|default('Enregistrer') }}
+			</button>
+			<a href="{{ path('app_utilisateurs_index') }}" class="btn btn-secondary px-4">
+				← Retour à la liste
+			</a>
+		</div>
+	</div>
+{# </div> #}
+</div>
+{{ form_end(form) }}
+{% endblock %}
+
+
+
+
+{# {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }} #}
+
+
+
+
+{# this one is good for future form
+{% block body %}
+	<div class="container mt-5">
+		<div class="row justify-content-center">
+			<div class="col-md-8">
+				<h2 class="mb-4">Utilisateur</h2>
+
+				{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+				{% for field in form %}
+					<div class="mb-3">
+						{{ form_label(field, null, {'label_attr': {'class': 'form-label'}}) }}
+						{{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+						{{ form_errors(field) }}
+					</div>
+				{% endfor %}
+
+				<button type="submit" class="btn btn-primary">
+					{{ button_label|default('Enregistrer') }}
+				</button>
+
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+{% endblock %} #}

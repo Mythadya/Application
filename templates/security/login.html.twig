@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion
+{% endblock %}
+
+{% block body %}
+	<div class="login-container py-4">
+		<section class="container my-4" style="max-width: 700px; margin: 0 auto; padding: 10px; border-radius: 25px; box-shadow: 0 4px 8px rgba(146, 85, 62, 0.3); background-color:white;">
+			<div class="row mb-4">
+				<div class="col">
+					<form method="post" action="{{ path('app_connexion') }}">
+						{% if error %}
+							<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+						{% endif %}
+
+						{% if app.user %}
+							<div class="mb-3">
+								Vous êtes connecté en tant que
+								{{ app.user.userIdentifier }},
+								<a href="{{ path('app_logout') }}">Déconnexion</a>
+							</div>
+						{% endif %}
+
+						<h1 class="h3 mb-3 text-center">Connexion</h1>
+						<label for="inputEmail">Email</label>
+						<input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+
+						<label for="inputPassword">Mot de passe</label>
+						<input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+
+						<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+						<button class="btn btn-lg btn-primary rounded-pill mt-3 mb-0" type="submit">
+							Se Connecter
+						</button>
+
+						<p class="mt-4 text-muted text-center" style="font-size: 0.99rem;">
+							L'inscription n'est pas ouverte au public.<br>
+							Seuls les utilisateurs invités par un administrateur peuvent créer un compte.
+						</p>
+					</form>
+				</div>
+			</div>
+		</section>
+	</div>
+{% endblock %}

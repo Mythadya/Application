@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Formations
+{% endblock %}
+
+{% block body %}
+	<div class="col-md-12 mt-4">
+		<h1 style="text-align:center" ;>Liste des Formations</h1>
+
+		<table class="table table-bordered table-striped mt-4">
+			<thead class="table-dark">
+				<tr>
+					<th>ID</th>
+					<th>Active</th>
+					<th>Nom</th>
+					<th>Numéro</th>
+					<th>Date Début</th>
+					<th>Date Fin</th>
+					<th>Date Debut validation</th>
+					<th>Date fin validation</th>
+					<th>Titre Professionnel</th>
+					<th>Niveau</th>
+					<th>NombreStagiaires</th>
+					<th>Groupe</th>
+					<th>Heures</th>
+					<th>Formateurs</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for formation in formations %}
+					<tr>
+						<td>{{ formation.id }}</td>
+						<td>{{ formation.actifFormation ? 'Oui' : 'Non' }}</td>
+						<td>{{ formation.nom }}</td>
+						<td>{{ formation.numero }}</td>
+						<td>{{ formation.dateDebut ? formation.dateDebut|date('d/m/Y') : '' }}</td>
+						<td>{{ formation.dateFin ? formation.dateFin |date('d/m/Y') : '' }}</td>
+						<td>{{ formation.dateDebutValidation ? formation.dateDebutValidation|date('d/m/Y') : '' }}</td>
+						<td>{{ formation.dateFinValidation ? formation.dateFinValidation|date('d/m/Y') : '' }}</td>
+						<td>{{ formation.titreProfessionnel }}</td>
+						<td>{{ formation.niveau }}</td>
+						<td>{{ formation.nombreStagiaires }}</td>
+						<td>{{ formation.groupeRattachement }}</td>
+						<td>{{ formation.nombreHeures }}</td>
+						<td>
+							{% if formation.formateurs is not empty %}
+								<ul class="mb-0 ps-3">
+									{% for formateur in formation.formateurs %}
+										<li>{{ formateur.prenom }}
+											{{ formateur.nom }}</li>
+									{% endfor %}
+								</ul>
+							{% else %}
+								<span class="text-muted">Aucun</span>
+							{% endif %}
+						</td>
+						<td>
+							<a href="{{ path('app_formation_show', {'id': formation.id}) }}" class="btn btn-sm btn-info">Voir</a>
+							<a href="{{ path('app_formation_edit', {'id': formation.id}) }}" class="btn btn-sm btn-primary">Éditer</a>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="12" class="text-center">Aucune formation trouvée.</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<a href="{{ path('app_formation_new') }}" class="btn btn-success">Créer une nouvelle formation</a>
+	</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Invitation{% endblock %}
+
+{% block body %}
+    <h1>Invitation</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ invitation.id }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ invitation.email }}</td>
+            </tr>
+            <tr>
+                <th>Token</th>
+                <td>{{ invitation.token }}</td>
+            </tr>
+            <tr>
+                <th>ExpiresAT</th>
+                <td>{{ invitation.expiresAT ? invitation.expiresAT|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Used</th>
+                <td>{{ invitation.used ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_invitation_index') }}">back to list</a>
+
+    <a href="{{ path('app_invitation_edit', {'id': invitation.id}) }}">edit</a>
+
+    {{ include('invitation/_delete_form.html.twig') }}
+{% endblock %}
